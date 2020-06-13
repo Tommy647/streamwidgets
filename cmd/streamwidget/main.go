@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -18,9 +19,13 @@ func main() {
 
 // FolderHandler handles folder paths
 func FolderHandler(w http.ResponseWriter, r *http.Request) {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
 	folder := r.URL.Path[1:]
-	file := fmt.Sprintf("./examples/%s/index.html", folder) // @todo: just testing code
-
+	file := fmt.Sprintf("%s/examples/%s/index.html", dir, folder) // @todo: just testing code
+	log.Printf("using: %s", file)
 	f, err := os.Open(file)
 	if err != nil {
 		log.Println(err)
