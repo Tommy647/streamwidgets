@@ -10,41 +10,43 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, Cath, how are you?")
-	http.HandleFunc("/", FolderHandler)
+	fmt.Println("Starting up")
+	http.HandleFunc("/", FolderHandler("examples"))
 	log.Fatal(
 		http.ListenAndServe(":8080", nil),
 	)
 }
 
 // FolderHandler handles folder paths
-func FolderHandler(w http.ResponseWriter, r *http.Request) {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Fatal(err)
-	}
-	folder := r.URL.Path[1:]
-	file := fmt.Sprintf("%s/examples/%s/index.html", dir, folder) // @todo: just testing code
-	log.Printf("using: %s", file)
-	f, err := os.Open(file)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
+func FolderHandler(folder string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			log.Fatal(err)
+		}
+		path := r.URL.Path[1:]
+		file := fmt.Sprintf("%s/%s/%s/index.html", dir, folder, path) // @todo: just testing code
+		log.Printf("using: %s", file)
+		f, err := os.Open(file)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusNotAcceptable)
+			return
+		}
 
-	data, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
+		data, err := ioutil.ReadAll(f)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusNotAcceptable)
+			return
+		}
 
-	_, err = fmt.Fprint(w, string(data))
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusNotAcceptable)
-		return
+		_, err = fmt.Fprint(w, string(data))
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusNotAcceptable)
+			return
+		}
 	}
 }
 
