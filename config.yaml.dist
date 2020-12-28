@@ -1,0 +1,10 @@
+watchers:
+  - name: simple
+    path: /Users/tsmith/Projects/streamwidgets/examples/simple
+bots:
+  - channel: tommy647uk
+    client_id:
+    client_secret:
+    user_token:
+    refresh_token:
+

@@ -1,0 +1,2 @@
+// Package streamwidgets
+package streamwidgets
